@@ -1,0 +1,13 @@
+.App {
+  padding: 15px;
+  background: #F5F5F5;
+  max-width: 768px;
+  margin-top: 25px;
+  border-radius: 10px;
+}
+
+@media (min-width: 576px) {
+  .App {
+    padding: 25px 50px;
+  }
+}
