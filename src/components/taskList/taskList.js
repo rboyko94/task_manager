@@ -1,54 +1,41 @@
 import React from 'react';
+import {bindActionCreators} from "redux";
+import {connect} from "react-redux";
+import * as actions from "../../actions/actions";
 import './taskList.scss';
 import Task from "./task/task";
 
 const TaskList = (props) => {
-    const {} = props;
+    const {tasks, actions} = props;
 
-    const handler = () => {
-        console.log(1);
-    };
+    let sortImportant = tasks.filter(task => task.important && !task.completed);
+    let sortDefault = tasks.filter(task => !task.important && !task.completed);
+    let sortCompleted = tasks.filter(task => task.completed);
 
-    const db = [
-            {
-                id: 1,
-                checked: true,
-                text: 'lorem ipsum',
-                important: false,
-            },
-            {
-                id: 2,
-                checked: false,
-                text: 'lorem ipsum',
-                important: false,
-            },
-            {
-                id: 3,
-                checked: false,
-                text: 'lorem ipsum',
-                important: false,
-            },
-        ]
-    ;
-
-    let tasks = db.map((task) => {
-        return (
+    let tasksList = [].concat(sortImportant, sortDefault, sortCompleted).filter(task => task.matchSearch).map(task => (
             <Task
                 key={task.id}
-                id={task.id}
-                checked={task.checked}
-                text={task.text}
-                important={task.important}
-                onChange={handler}
+                task={task}
+                onChange={() => actions.setTaskStatus(task.id)}
             />
         )
-    });
+    );
 
     return (
         <ul className="task-list">
-            {tasks}
+            {tasksList}
         </ul>
     )
 };
 
-export default TaskList;
+function mapStateToProps(state) {
+    return {
+        tasks: state.tasks,
+    };
+}
+
+const mapDispatchToProps = (dispatch) => ({
+    actions: bindActionCreators(actions, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(TaskList);
